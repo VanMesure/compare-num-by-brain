@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="blackorwhite.css">
+  <meta charset="utf-8">
+  <script src="jquery-1.4.2.min.js"></script>
+  <script src="brain-0.6.3.js"></script>
+  <script src="blackorwhite.js"></script>
+
+  <title>demo</title>
+  <style type="text/css">
+    *{
+      margin:0;
+      padding: 0;
+      color: #000;
+    }
+    body{
+      width: 70%;
+      background-color: #faf7ef;
+      margin: 0 auto;
+    }
+    .contant{
+      width: 70%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      margin-top: 50px;
+    }
+
+    .num-contant{
+      width: 30%;
+      height: 100px;
+      
+      border-radius: 10px;
+      background-color: #6466B3;
+      text-align: center;
+      font-weight: 700;
+      font-size: 34px;
+      line-height: 84px;
+    }
+    .num-contant:hover{
+      background-color: #8466b3;
+      cursor:default; 
+    }
+    h1{
+      text-align: center;
+      margin-top: 30px;
+    }
+    
+    .test-result{
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      border-bottom: none;
+      font-size: 16px;
+      background-color: #eee;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .row{
+      height: 25px;
+      border-bottom: 1px solid #ccc;
+      line-height: 25px;
+    }
+
+  </style>
+</head>
+
+<body>
+  <div class="contant">
+    
+    <div id="num1" class="num-contant">2222</div>
+    
+    <div id="num2" class="num-contant">222</div>
+  </div>
+  <h1>哪一个更大？</h1>
+
+  <div class="test-result">
+    
+  </div>
+  
+  <button id="button"></button>
+</body>
+  <script type="text/javascript">
+    var num1Div = document.getElementById("num1");
+    var num2Div = document.getElementById("num2");
+    var num1 = 3;
+    var num2 = 7;
+    var data = [];
+    var net = new brain.NeuralNetwork();
+    refreshUI();
+
+    function clickEvent1(){
+      var dataObj = null;
+      dataObj = new getJson(num1, num2, 0);
+      
+      //传入数据并训练
+      data.push(dataObj);
+      net.train(data);
+      //test();
+      //更新随机数及ui
+      do{
+        num1 = getRandom();
+        num2 = getRandom();
+      }while(num1 == num2);
+      refreshUI();
+      test();
+    }
+
+    function clickEvent2(){
+      var dataObj = null;
+      dataObj = new getJson(num1, num2, 1);
+      
+      //传入数据并训练
+      data.push(dataObj);
+      net.train(data);
+      //test();
+      //更新随机数及ui
+      do{
+        num1 = getRandom();
+        num2 = getRandom();
+      }while(num1 == num2);
+      refreshUI();
+      test();
+    }
+    num1Div.addEventListener("click",clickEvent1);
+    num2Div.addEventListener("click",clickEvent2);
+
+
+
+   
+    function refreshUI(){
+      num1Div.innerHTML = num1;
+      num2Div.innerHTML = num2;
+    }
+    
+
+    function getJson(a, b, c){
+        this.input = [];
+        this.output = [];
+        this.input[0] = a;
+        this.input[1] = b;
+        this.output[0] = c;
+      
+    }
+
+    function getRandom(){
+      return Math.floor(Math.random() * 100);
+    }
+
+    function test(){
+      var input = [];
+      var a,b;
+      do{
+        a = getRandom();
+        b = getRandom();
+      }while(a == b);
+      input.push(a);
+      input.push(b);
+      var text = "正在测试" + a + "  " + b + "   认为后者比较大的概率为 " + parseFloat(String(net.run(input))).toFixed(4);
+      var row = document.createElement("div");
+      row.className = "row";
+      row.innerHTML = text;
+      document.getElementsByClassName("test-result")[0].appendChild(row);
+    }
+   
+
+  </script>
+
+</html>
